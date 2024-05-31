@@ -2,7 +2,9 @@
 import * as React from 'react';
 import { Admin, Resource, AppBar, UserMenu, MenuItemLink, Layout } from 'react-admin';
 import dataProvider from './dataProvider';
-import i18nProvider from './i18nProvider'; // Asegúrate de que esté en mayúscula P
+import i18nProvider from './i18nProvider';
+import authProvider from './authProvider';
+import LoginPage from './LoginPage'; // Importa la página de login personalizada
 import { ClienteList, ClienteEdit, ClienteCreate } from './clientes';
 import { ItemList, ItemEdit, ItemCreate } from './items';
 import { MensajeroList, MensajeroEdit, MensajeroCreate } from './mensajero';
@@ -13,22 +15,22 @@ import { UsuarioList, UsuarioEdit, UsuarioCreate } from './usuario';
 import { useTranslate, useLocale } from 'react-admin';
 import { useState } from 'react';
 
-const CustomUserMenu = props => {
+const CustomUserMenu = ({ onLocaleChange }) => {
     const translate = useTranslate();
     const locale = useLocale();
 
     return (
-        <UserMenu {...props}>
+        <UserMenu>
             <MenuItemLink
                 to="/"
                 primaryText={translate('pos.language.english')}
-                onClick={() => props.onLocaleChange('en')}
+                onClick={() => onLocaleChange('en')}
                 selected={locale === 'en'}
             />
             <MenuItemLink
                 to="/"
                 primaryText={translate('pos.language.spanish')}
-                onClick={() => props.onLocaleChange('es')}
+                onClick={() => onLocaleChange('es')}
                 selected={locale === 'es'}
             />
         </UserMenu>
@@ -50,9 +52,11 @@ const App = () => {
         <Admin
             dataProvider={dataProvider}
             i18nProvider={i18nProvider}
+            authProvider={authProvider}
             locale={locale}
             onLocaleChange={setLocale}
             layout={CustomLayout}
+            loginPage={LoginPage} // Especifica la página de login personalizada
         >
             <Resource name="clientes" list={ClienteList} edit={ClienteEdit} create={ClienteCreate} />
             <Resource name="items" list={ItemList} edit={ItemEdit} create={ItemCreate} />
